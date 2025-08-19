@@ -126,66 +126,258 @@ export default function CallPage() {
     }
   }, [conversation]);
 
+  // Audio visualization component
+  const AudioVisualizer = ({ isActive }: { isActive: boolean }) => (
+    <Box className="audio-visualizer">
+      {[...Array(8)].map((_, i) => (
+        <Box
+          key={i}
+          className="audio-bar"
+          sx={{
+            height: isActive ? "auto" : "20px",
+            animationPlayState: isActive ? "running" : "paused",
+          }}
+        />
+      ))}
+    </Box>
+  );
+
   return (
     <AuthGate>
-      <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Jarvis
-          </Typography>
-          <Stack direction="row" spacing={2}>
-            <Button href="/" variant="outlined">Home</Button>
-            <Button href="/history" variant="outlined">History</Button>
-            <Button onClick={async () => {
-              const { getSupabaseBrowserClient } = await import("@/lib/supabaseClient");
-              const supabase = getSupabaseBrowserClient();
-              await supabase.auth.signOut();
-              window.location.href = "/login";
-            }}>Sign out</Button>
-          </Stack>
-        </Toolbar>
-      </AppBar>
-      <Container maxWidth="sm">
-        <Stack spacing={3} alignItems="center" mt={6}>
-          <Typography variant="h5" fontWeight={700}>
-            Real-time Call with Jarvis
-          </Typography>
-          <Paper variant="outlined" sx={{ width: "100%", height: 240, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 2 }}>
-            <Typography color="text.secondary">
-              Status: {conversation.status}
+      <Box className="gradient-bg" sx={{ minHeight: "100vh" }}>
+        <AppBar position="static" color="transparent" elevation={0} sx={{ 
+          background: "rgba(16, 21, 28, 0.8)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(144, 202, 249, 0.2)"
+        }}>
+          <Toolbar>
+            <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
+              Jarvis AI
             </Typography>
-            <Typography color="text.secondary">
-              {conversation.status === "connected" 
-                ? conversation.isSpeaking 
-                  ? "Jarvis is speaking..." 
-                  : "Listening... speak to Jarvis"
-                : "Click Start to begin conversation"
-              }
+            <Stack direction="row" spacing={2}>
+              <Button 
+                href="/" 
+                variant="outlined"
+                sx={{ 
+                  borderRadius: 3,
+                  textTransform: "none",
+                  borderColor: "rgba(144, 202, 249, 0.5)",
+                  "&:hover": {
+                    borderColor: "#90caf9",
+                    background: "rgba(144, 202, 249, 0.1)"
+                  }
+                }}
+              >
+                Home
+              </Button>
+              <Button 
+                href="/history" 
+                variant="outlined"
+                sx={{ 
+                  borderRadius: 3,
+                  textTransform: "none",
+                  borderColor: "rgba(144, 202, 249, 0.5)",
+                  "&:hover": {
+                    borderColor: "#90caf9",
+                    background: "rgba(144, 202, 249, 0.1)"
+                  }
+                }}
+              >
+                History
+              </Button>
+              <Button 
+                onClick={async () => {
+                  const { getSupabaseBrowserClient } = await import("@/lib/supabaseClient");
+                  const supabase = getSupabaseBrowserClient();
+                  await supabase.auth.signOut();
+                  window.location.href = "/login";
+                }}
+                sx={{ 
+                  borderRadius: 3,
+                  textTransform: "none",
+                  color: "rgba(255, 255, 255, 0.7)",
+                  "&:hover": {
+                    background: "rgba(255, 255, 255, 0.1)"
+                  }
+                }}
+              >
+                Sign out
+              </Button>
+            </Stack>
+          </Toolbar>
+        </AppBar>
+        <Container maxWidth="sm">
+          <Stack spacing={4} alignItems="center" mt={6}>
+            <Typography variant="h4" fontWeight={800} sx={{
+              background: "linear-gradient(45deg, #90caf9, #64b5f6)",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              textAlign: "center"
+            }}>
+              Talk to Jarvis
             </Typography>
-          </Paper>
-          <Box>
-            {conversation.status !== "connected" ? (
-              <Button 
-                onClick={startConversation} 
-                disabled={conversation.status === "connecting"} 
-                variant="contained" 
-                size="large"
+            
+            <Box 
+              className={`glass-card-dark ${conversation.isSpeaking ? 'speaking-pulse' : ''}`}
+              sx={{ 
+                width: "100%", 
+                minHeight: 320, 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                flexDirection: "column", 
+                gap: 3,
+                p: 4,
+                position: "relative",
+                overflow: "hidden"
+              }}
+            >
+              {/* Status indicator */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 20,
+                  right: 20,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1
+                }}
               >
-                {conversation.status === "connecting" ? "Connecting..." : "Start Conversation"}
-              </Button>
-            ) : (
-              <Button 
-                color="error" 
-                onClick={stopConversation} 
-                variant="contained" 
-                size="large"
+                <Box
+                  sx={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: "50%",
+                    backgroundColor: conversation.status === "connected" ? "#4caf50" : 
+                                   conversation.status === "connecting" ? "#ff9800" : "#757575",
+                    animation: conversation.status === "connecting" ? "pulse 1s infinite" : "none"
+                  }}
+                />
+                <Typography variant="caption" color="text.secondary" sx={{ textTransform: "capitalize" }}>
+                  {conversation.status}
+                </Typography>
+              </Box>
+
+              {/* Main content area */}
+              <Box textAlign="center" sx={{ mb: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  {conversation.status === "connected" 
+                    ? conversation.isSpeaking 
+                      ? "🗣️ Jarvis is speaking..." 
+                      : "👂 Listening... speak now"
+                    : "🎤 Ready to connect"
+                  }
+                </Typography>
+                <Typography color="text.secondary" variant="body2">
+                  {conversation.status === "connected" 
+                    ? "Having a conversation with Jarvis AI"
+                    : "Click the button below to start your conversation"
+                  }
+                </Typography>
+              </Box>
+
+              {/* Audio visualizer */}
+              {conversation.status === "connected" && (
+                <Box sx={{ my: 3 }}>
+                  <AudioVisualizer isActive={conversation.isSpeaking || conversation.status === "connected"} />
+                </Box>
+              )}
+
+              {/* Connection button */}
+              <Box sx={{ mt: "auto" }}>
+                {conversation.status !== "connected" ? (
+                  <Button 
+                    onClick={startConversation} 
+                    disabled={conversation.status === "connecting"} 
+                    variant="contained" 
+                    size="large"
+                    sx={{ 
+                      borderRadius: 4,
+                      px: 6,
+                      py: 2,
+                      textTransform: "none",
+                      fontSize: "1.1rem",
+                      background: "linear-gradient(45deg, #90caf9, #64b5f6)",
+                      "&:hover": {
+                        background: "linear-gradient(45deg, #64b5f6, #42a5f5)",
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 12px 24px rgba(144, 202, 249, 0.3)"
+                      },
+                      "&:disabled": {
+                        background: "rgba(144, 202, 249, 0.3)",
+                        transform: "none",
+                        boxShadow: "none"
+                      },
+                      transition: "all 0.3s ease"
+                    }}
+                  >
+                    {conversation.status === "connecting" ? "🔄 Connecting..." : "🎤 Start Conversation"}
+                  </Button>
+                ) : (
+                  <Button 
+                    color="error" 
+                    onClick={stopConversation} 
+                    variant="contained" 
+                    size="large"
+                    sx={{ 
+                      borderRadius: 4,
+                      px: 6,
+                      py: 2,
+                      textTransform: "none",
+                      fontSize: "1.1rem",
+                      background: "linear-gradient(45deg, #f44336, #e53935)",
+                      "&:hover": {
+                        background: "linear-gradient(45deg, #e53935, #d32f2f)",
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 12px 24px rgba(244, 67, 54, 0.3)"
+                      },
+                      transition: "all 0.3s ease"
+                    }}
+                  >
+                    🛑 End Conversation
+                  </Button>
+                )}
+              </Box>
+            </Box>
+
+            {/* Conversation messages preview */}
+            {messages.length > 0 && (
+              <Box 
+                className="glass-card-dark"
+                sx={{ 
+                  width: "100%", 
+                  maxHeight: 200, 
+                  overflow: "auto",
+                  p: 3
+                }}
               >
-                End Conversation
-              </Button>
+                <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2 }}>
+                  Conversation Preview
+                </Typography>
+                <Stack spacing={1}>
+                  {messages.slice(-3).map((message, index) => (
+                    <Box key={index} sx={{ 
+                      p: 1, 
+                      borderRadius: 2, 
+                      background: message.role === 'user' 
+                        ? "rgba(144, 202, 249, 0.1)" 
+                        : "rgba(255, 255, 255, 0.05)" 
+                    }}>
+                      <Typography variant="caption" color="text.secondary">
+                        {message.role === 'user' ? 'You' : 'Jarvis'}:
+                      </Typography>
+                      <Typography variant="body2">
+                        {message.content}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Stack>
+              </Box>
             )}
-          </Box>
-        </Stack>
-      </Container>
+          </Stack>
+        </Container>
+      </Box>
     </AuthGate>
   );
 }
