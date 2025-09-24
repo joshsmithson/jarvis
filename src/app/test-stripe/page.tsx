@@ -179,7 +179,6 @@ export default function StripeTestPage() {
       }}>
         Stripe Integration Testing
       </Typography>
-
       {message && (
         <Alert 
           severity={message.type} 
@@ -189,7 +188,6 @@ export default function StripeTestPage() {
           {message.text}
         </Alert>
       )}
-
       {/* Current Status */}
       <Card sx={{ mb: 4, background: 'rgba(255, 255, 255, 0.05)' }}>
         <CardContent>
@@ -197,7 +195,11 @@ export default function StripeTestPage() {
             Current Status
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <Typography variant="body2" color="text.secondary">
                 User ID
               </Typography>
@@ -205,7 +207,11 @@ export default function StripeTestPage() {
                 {user.id}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <Typography variant="body2" color="text.secondary">
                 Email
               </Typography>
@@ -213,7 +219,11 @@ export default function StripeTestPage() {
                 {user.email}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <Typography variant="body2" color="text.secondary">
                 Current Plan
               </Typography>
@@ -223,7 +233,11 @@ export default function StripeTestPage() {
                 sx={{ mt: 0.5 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <Typography variant="body2" color="text.secondary">
                 Subscription Status
               </Typography>
@@ -234,7 +248,7 @@ export default function StripeTestPage() {
               />
             </Grid>
             {userPlan?.stripe_customer_id && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Typography variant="body2" color="text.secondary">
                   Stripe Customer ID
                 </Typography>
@@ -244,7 +258,7 @@ export default function StripeTestPage() {
               </Grid>
             )}
             {userPlan?.stripe_subscription_id && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Typography variant="body2" color="text.secondary">
                   Stripe Subscription ID
                 </Typography>
@@ -266,11 +280,10 @@ export default function StripeTestPage() {
           </Box>
         </CardContent>
       </Card>
-
       {/* Test Actions */}
       <Grid container spacing={3}>
         {/* Upgrade/Subscribe */}
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Paper sx={{ p: 3, background: 'rgba(255, 255, 255, 0.05)' }}>
             <Typography variant="h6" gutterBottom>
               Subscribe or Change Plan
@@ -304,7 +317,7 @@ export default function StripeTestPage() {
         </Grid>
 
         {/* Customer Portal */}
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Paper sx={{ p: 3, background: 'rgba(255, 255, 255, 0.05)' }}>
             <Typography variant="h6" gutterBottom>
               Stripe Customer Portal
@@ -337,7 +350,7 @@ export default function StripeTestPage() {
         </Grid>
 
         {/* Test Instructions */}
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Paper sx={{ p: 3, background: 'rgba(255, 255, 255, 0.05)' }}>
             <Typography variant="h6" gutterBottom>
               Testing Instructions

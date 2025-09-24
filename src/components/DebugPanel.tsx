@@ -93,7 +93,6 @@ export default function DebugPanel({
           {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </IconButton>
       </Box>
-
       {/* Toggle */}
       <Box sx={{ px: 2, pb: isExpanded ? 0 : 2 }}>
         <FormControlLabel
@@ -108,14 +107,13 @@ export default function DebugPanel({
           sx={{ m: 0 }}
         />
       </Box>
-
       {/* Detailed metrics when expanded */}
       <Collapse in={isExpanded}>
         <Divider sx={{ mx: 2, borderColor: 'rgba(144, 202, 249, 0.2)' }} />
         <Box sx={{ p: 2 }}>
           <Grid container spacing={2}>
             {/* Duration Metrics */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
                 Duration Metrics
               </Typography>
@@ -142,7 +140,7 @@ export default function DebugPanel({
             </Grid>
 
             {/* Message Metrics */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
                 Message Metrics
               </Typography>
@@ -169,7 +167,7 @@ export default function DebugPanel({
             </Grid>
 
             {/* Usage & Cost */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
                 Usage & Cost
               </Typography>
@@ -197,7 +195,7 @@ export default function DebugPanel({
 
             {/* Live indicators */}
             {isConversationActive && (
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Box sx={{ 
                   p: 2, 
                   borderRadius: 2, 

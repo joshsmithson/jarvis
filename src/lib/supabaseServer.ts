@@ -11,9 +11,6 @@ export function getSupabaseServerClient() {
       autoRefreshToken: false,
       persistSession: false,
     },
-    realtime: {
-      disabled: true, // Disable realtime to reduce bundle size and warnings
-    },
   });
 }
 

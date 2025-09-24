@@ -265,7 +265,11 @@ export default function SettingsPage() {
 
           <Grid container spacing={4}>
             {/* Account & Plan Section */}
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Paper sx={{ 
                 background: 'rgba(16, 21, 28, 0.8)',
                 backdropFilter: 'blur(20px)',
@@ -380,7 +384,11 @@ export default function SettingsPage() {
             </Grid>
 
             {/* App Preferences */}
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6
+              }}>
               <Paper sx={{ 
                 background: 'rgba(16, 21, 28, 0.8)',
                 backdropFilter: 'blur(20px)',
@@ -441,7 +449,7 @@ export default function SettingsPage() {
             </Grid>
 
             {/* Security & Privacy */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Paper sx={{ 
                 background: 'rgba(16, 21, 28, 0.8)',
                 backdropFilter: 'blur(20px)',
@@ -456,7 +464,12 @@ export default function SettingsPage() {
                 </Box>
 
                 <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6} md={4}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                      md: 4
+                    }}>
                     <Button
                       variant="outlined"
                       fullWidth
@@ -479,7 +492,12 @@ export default function SettingsPage() {
                     </Button>
                   </Grid>
                   
-                  <Grid item xs={12} sm={6} md={4}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                      md: 4
+                    }}>
                     <Button
                       variant="outlined"
                       fullWidth
@@ -503,7 +521,12 @@ export default function SettingsPage() {
                     </Button>
                   </Grid>
                   
-                  <Grid item xs={12} sm={6} md={4}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                      md: 4
+                    }}>
                     <Button
                       variant="outlined"
                       fullWidth

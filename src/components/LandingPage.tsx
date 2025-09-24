@@ -215,7 +215,6 @@ export default function LandingPage() {
           </Stack>
         </Toolbar>
       </AppBar>
-
       {/* Hero Section */}
       <Container maxWidth="lg">
         <Box sx={{ py: { xs: 8, md: 12 }, textAlign: 'center' }}>
@@ -295,7 +294,13 @@ export default function LandingPage() {
           
           <Grid container spacing={4}>
             {features.map((feature, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
+              <Grid
+                key={index}
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 3
+                }}>
                 <Card sx={{ 
                   height: '100%',
                   background: 'rgba(16, 21, 28, 0.8)',
@@ -332,7 +337,12 @@ export default function LandingPage() {
           
           <Grid container spacing={4}>
             {testimonials.map((testimonial, index) => (
-              <Grid item xs={12} md={4} key={index}>
+              <Grid
+                key={index}
+                size={{
+                  xs: 12,
+                  md: 4
+                }}>
                 <Paper sx={{ 
                   p: 3,
                   background: 'rgba(16, 21, 28, 0.8)',
@@ -377,7 +387,13 @@ export default function LandingPage() {
           
           <Grid container spacing={3} justifyContent="center">
             {pricingPlans.map((plan, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
+              <Grid
+                key={index}
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 3
+                }}>
                 <Card sx={{ 
                   height: '100%',
                   background: plan.popular ? 'linear-gradient(145deg, rgba(76, 175, 80, 0.1), rgba(16, 21, 28, 0.9))' : 'rgba(16, 21, 28, 0.8)',
@@ -531,7 +547,6 @@ export default function LandingPage() {
           </Button>
         </Box>
       </Container>
-
       {/* Footer */}
       <Box sx={{ 
         borderTop: '1px solid rgba(144, 202, 249, 0.2)',
@@ -546,7 +561,6 @@ export default function LandingPage() {
           </Box>
         </Container>
       </Box>
-
     </Box>
   );
 }

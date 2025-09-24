@@ -245,7 +245,11 @@ export default function UserDashboard() {
 
           {/* Plan & Usage Overview */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} md={8}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 8
+              }}>
               <Paper sx={{ 
                 background: 'rgba(16, 21, 28, 0.8)',
                 backdropFilter: 'blur(20px)',
@@ -318,7 +322,11 @@ export default function UserDashboard() {
               </Paper>
             </Grid>
 
-            <Grid item xs={12} md={4}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 4
+              }}>
               <StatCard
                 title="Total Conversations"
                 value={usage.conversations_used.toString()}
@@ -331,7 +339,12 @@ export default function UserDashboard() {
 
           {/* Usage Stats */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3
+              }}>
               <StatCard
                 title="Total Talk Time"
                 value={formatDuration(usage.total_duration)}
@@ -340,7 +353,12 @@ export default function UserDashboard() {
                 color="#4caf50"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3
+              }}>
               <StatCard
                 title="Tokens Used"
                 value={usage.total_tokens.toLocaleString()}
@@ -349,7 +367,12 @@ export default function UserDashboard() {
                 color="#9c27b0"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3
+              }}>
               <StatCard
                 title="Total Cost"
                 value={formatCost(usage.total_cost)}
@@ -358,7 +381,12 @@ export default function UserDashboard() {
                 color="#ff9800"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 3
+              }}>
               <StatCard
                 title="Avg per Call"
                 value={usage.conversations_used > 0 ? formatDuration(Math.round(usage.total_duration / usage.conversations_used)) : "0m"}

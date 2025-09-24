@@ -19,6 +19,8 @@ interface UsageEvent {
     duration_ms?: number;
     content?: string;
     tokens?: number;
+    isUser?: boolean;
+    estimated_tokens?: number;
   };
 }
 
@@ -144,7 +146,6 @@ export function useConversationTracking() {
       data: { 
         content, 
         isUser, 
-        length: content.length, 
         estimated_tokens: tokenEstimate 
       } 
     });

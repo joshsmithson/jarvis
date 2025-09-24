@@ -63,7 +63,13 @@ export default function CallPage() {
       // Use ref-based save to avoid stale closure issues
       saveConversationFromRefs(finalMetrics);
     },
-    onMessage: (message) => {
+    onMessage: (message: {
+      source?: 'user' | 'ai';
+      message?: string;
+      content?: string;
+      text?: string;
+      type?: string;
+    }) => {
       console.log("Message:", message);
       
       // Handle the actual ElevenLabs message format
@@ -321,6 +327,7 @@ export default function CallPage() {
       // Start the conversation with your agent
       await conversation.startSession({
         agentId: process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID || "agent_7501k2msdrq5e6rs31xb2yw14eyk",
+        connectionType: "websocket" as const,
       });
     } catch (error) {
       console.error("Failed to start conversation:", error);
