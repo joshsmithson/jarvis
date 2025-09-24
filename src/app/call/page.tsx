@@ -4,7 +4,7 @@ import AuthGate from "@/components/AuthGate";
 import DebugPanel from "@/components/DebugPanel";
 import UserMenu from "@/components/UserMenu";
 import UsageLimitModal from "@/components/UsageLimitModal";
-import { AppBar, Box, Button, Container, Paper, Stack, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, Container, Stack, Toolbar, Typography } from "@mui/material";
 import { useConversation } from "@elevenlabs/react";
 import { useCallback, useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -187,7 +187,15 @@ export default function CallPage() {
   }, []);
 
   // Create a ref-based save function that doesn't depend on state
-  const saveConversationFromRefs = useCallback(async (metrics?: any) => {
+  const saveConversationFromRefs = useCallback(async (metrics?: {
+    duration_seconds: number;
+    estimated_tokens: number;
+    user_speech_duration: number;
+    ai_speech_duration: number;
+    message_count: number;
+    user_message_count: number;
+    ai_message_count: number;
+  }) => {
     console.log('saveConversationFromRefs called');
     console.log('Messages from ref:', messagesRef.current);
     console.log('StartTime from ref:', startTimeRef.current);
@@ -248,7 +256,7 @@ export default function CallPage() {
     } catch (error) {
       console.error('Failed to save conversation:', error);
     }
-  }, []);
+  }, [getEstimatedCost]);
 
   // Keep the original save function for manual saves (uses current state)
   const saveConversation = useCallback(async () => {
