@@ -1,6 +1,7 @@
 "use client";
 
 import AuthGate from "@/components/AuthGate";
+import UserMenu from "@/components/UserMenu";
 import { AppBar, Box, Button, Container, IconButton, Paper, Stack, Toolbar, Typography, CircularProgress } from "@mui/material";
 import { ArrowBack, Delete } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -9,10 +10,9 @@ import { useParams, useRouter } from "next/navigation";
 interface Conversation {
   id: string;
   title: string;
-  transcript: string;
-  started_at: string;
-  ended_at: string;
+  transcript?: string;
   created_at: string;
+  audio_url?: string;
 }
 
 export default function ConversationDetailPage() {
@@ -75,97 +75,196 @@ export default function ConversationDetailPage() {
 
   return (
     <AuthGate>
-      <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Toolbar>
-          <IconButton onClick={() => router.push('/history')} sx={{ mr: 2 }}>
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Conversation Details
-          </Typography>
-          <Stack direction="row" spacing={2}>
-            <Button href="/" variant="outlined">Home</Button>
-            <Button href="/call" variant="contained">Start Call</Button>
-            <Button onClick={async () => {
-              const { getSupabaseBrowserClient } = await import("@/lib/supabaseClient");
-              const supabase = getSupabaseBrowserClient();
-              await supabase.auth.signOut();
-              window.location.href = "/login";
-            }}>Sign out</Button>
-          </Stack>
-        </Toolbar>
-      </AppBar>
-      
-      <Container maxWidth="md">
-        {loading ? (
-          <Stack alignItems="center" py={8}>
-            <CircularProgress />
-          </Stack>
-        ) : conversation ? (
-          <Stack spacing={3} mt={6}>
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-              <Box>
-                <Typography variant="h5" fontWeight={700} gutterBottom>
-                  {conversation.title}
-                </Typography>
-                <Typography color="text.secondary" variant="body2">
-                  {new Date(conversation.started_at).toLocaleDateString()} at{' '}
-                  {new Date(conversation.started_at).toLocaleTimeString()}
-                </Typography>
-                <Typography color="text.secondary" variant="body2">
-                  Duration: {Math.round((new Date(conversation.ended_at).getTime() - new Date(conversation.started_at).getTime()) / 1000 / 60)} minutes
-                </Typography>
-              </Box>
-              <IconButton onClick={handleDelete} color="error">
-                <Delete />
-              </IconButton>
+      <Box className="gradient-bg" sx={{ minHeight: "100vh" }}>
+        <AppBar position="static" color="transparent" elevation={0} sx={{ 
+          background: "rgba(16, 21, 28, 0.8)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(144, 202, 249, 0.2)"
+        }}>
+          <Toolbar>
+            <IconButton 
+              onClick={() => router.push('/history')} 
+              sx={{ 
+                mr: 2,
+                color: "#90caf9",
+                "&:hover": {
+                  background: "rgba(144, 202, 249, 0.1)"
+                }
+              }}
+            >
+              <ArrowBack />
+            </IconButton>
+            <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
+              Jarvis AI
+            </Typography>
+            <Stack direction="row" spacing={2}>
+              <Button 
+                onClick={() => router.push("/")}
+                variant="outlined"
+                sx={{ 
+                  borderRadius: 3,
+                  textTransform: "none",
+                  borderColor: "rgba(144, 202, 249, 0.5)",
+                  "&:hover": {
+                    borderColor: "#90caf9",
+                    background: "rgba(144, 202, 249, 0.1)"
+                  }
+                }}
+              >
+                Home
+              </Button>
+              <Button 
+                onClick={() => router.push("/call")}
+                variant="contained"
+                sx={{ 
+                  borderRadius: 3,
+                  textTransform: "none",
+                  background: "linear-gradient(45deg, #90caf9, #64b5f6)",
+                  "&:hover": {
+                    background: "linear-gradient(45deg, #64b5f6, #42a5f5)",
+                  }
+                }}
+              >
+                Start Call
+              </Button>
+              <UserMenu />
             </Stack>
-
-            <Paper variant="outlined" sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Conversation Transcript
-              </Typography>
-              {conversation.transcript ? (
-                <Stack spacing={2}>
-                  {formatTranscript(conversation.transcript).map((message) => (
-                    <Box 
-                      key={message.index}
+          </Toolbar>
+        </AppBar>
+        
+        <Container maxWidth="md">
+          <Stack spacing={4} mt={6}>
+            {loading ? (
+              <Box 
+                className="glass-card-dark"
+                sx={{ 
+                  p: 6,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <CircularProgress sx={{ color: "#90caf9" }} />
+              </Box>
+            ) : conversation ? (
+              <>
+                <Box className="glass-card-dark" sx={{ p: 4 }}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                    <Box>
+                      <Typography variant="h4" fontWeight={800} gutterBottom sx={{
+                        background: "linear-gradient(45deg, #90caf9, #64b5f6)",
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                      }}>
+                        {conversation.title}
+                      </Typography>
+                      <Typography color="text.secondary" variant="body1" sx={{ mb: 1 }}>
+                        📅 {new Date(conversation.created_at).toLocaleDateString()} at{' '}
+                        {new Date(conversation.created_at).toLocaleTimeString()}
+                      </Typography>
+                      {conversation.audio_url && (
+                        <Typography color="text.secondary" variant="body1">
+                          🎵 Audio recording available
+                        </Typography>
+                      )}
+                    </Box>
+                    <IconButton 
+                      onClick={handleDelete} 
                       sx={{
-                        p: 2,
-                        borderRadius: 2,
-                        bgcolor: message.role === 'user' ? 'action.hover' : 'primary.main',
-                        color: message.role === 'user' ? 'text.primary' : 'primary.contrastText',
-                        alignSelf: message.role === 'user' ? 'flex-end' : 'flex-start',
-                        maxWidth: '80%',
+                        color: "#f44336",
+                        "&:hover": {
+                          background: "rgba(244, 67, 54, 0.1)"
+                        }
                       }}
                     >
-                      <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                        {message.role === 'user' ? 'You' : 'Jarvis'}
+                      <Delete />
+                    </IconButton>
+                  </Stack>
+                </Box>
+
+                <Box className="glass-card-dark" sx={{ p: 4 }}>
+                  <Typography variant="h5" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
+                    💬 Conversation Transcript
+                  </Typography>
+                  {conversation.transcript ? (
+                    <Stack spacing={3}>
+                      {formatTranscript(conversation.transcript).map((message) => (
+                        <Box 
+                          key={message.index}
+                          sx={{
+                            p: 3,
+                            borderRadius: 3,
+                            background: message.role === 'user' 
+                              ? "rgba(144, 202, 249, 0.1)" 
+                              : "rgba(255, 255, 255, 0.05)",
+                            border: `1px solid ${message.role === 'user' ? 'rgba(144, 202, 249, 0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
+                            alignSelf: message.role === 'user' ? 'flex-end' : 'flex-start',
+                            maxWidth: '85%',
+                          }}
+                        >
+                          <Typography 
+                            variant="caption" 
+                            sx={{ 
+                              opacity: 0.8,
+                              fontWeight: 600,
+                              color: message.role === 'user' ? '#90caf9' : '#ffffff',
+                              display: "block",
+                              mb: 1
+                            }}
+                          >
+                            {message.role === 'user' ? '👤 You' : '🤖 Jarvis'}
+                          </Typography>
+                          <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
+                            {message.content}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Stack>
+                  ) : (
+                    <Stack alignItems="center" spacing={2} py={4}>
+                      <Typography variant="h6" color="text.secondary">
+                        No transcript available
                       </Typography>
-                      <Typography variant="body1">
-                        {message.content}
+                      <Typography color="text.secondary" textAlign="center">
+                        This conversation doesn't have a saved transcript.
                       </Typography>
-                    </Box>
-                  ))}
-                </Stack>
-              ) : (
-                <Typography color="text.secondary">
-                  No transcript available for this conversation.
+                    </Stack>
+                  )}
+                </Box>
+              </>
+            ) : (
+              <Box className="glass-card-dark" sx={{ p: 6, textAlign: "center" }}>
+                <Typography variant="h5" color="text.secondary" gutterBottom>
+                  Conversation not found
                 </Typography>
-              )}
-            </Paper>
+                <Typography color="text.secondary" sx={{ mb: 3 }}>
+                  The conversation you're looking for doesn't exist or has been deleted.
+                </Typography>
+                <Button 
+                  onClick={() => router.push('/history')}
+                  variant="contained"
+                  sx={{ 
+                    borderRadius: 3,
+                    px: 4,
+                    py: 1.5,
+                    textTransform: "none",
+                    background: "linear-gradient(45deg, #90caf9, #64b5f6)",
+                    "&:hover": {
+                      background: "linear-gradient(45deg, #64b5f6, #42a5f5)",
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 12px 24px rgba(144, 202, 249, 0.3)"
+                    },
+                    transition: "all 0.3s ease"
+                  }}
+                >
+                  ← Back to History
+                </Button>
+              </Box>
+            )}
           </Stack>
-        ) : (
-          <Stack alignItems="center" py={8}>
-            <Typography variant="h6" color="text.secondary">
-              Conversation not found
-            </Typography>
-            <Button onClick={() => router.push('/history')} sx={{ mt: 2 }}>
-              Back to History
-            </Button>
-          </Stack>
-        )}
-      </Container>
+        </Container>
+      </Box>
     </AuthGate>
   );
 }

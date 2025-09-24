@@ -1,30 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseServerClient } from "@/lib/supabaseServer";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // Use service role for server-side operations
-);
+const supabase = getSupabaseServerClient();
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
-
+    const { id } = await params;
     const { data, error } = await supabase
       .from('conversations')
-      .select('*')
+      .select('id, title, transcript, created_at, audio_url, user_id')
       .eq('id', id)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
-      }
       console.error('Supabase error:', error);
       return NextResponse.json({ error: 'Failed to fetch conversation' }, { status: 500 });
+    }
+
+    if (!data) {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
     }
 
     return NextResponse.json({ conversation: data });
@@ -34,13 +28,9 @@ export async function GET(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
-
+    const { id } = await params;
     const { error } = await supabase
       .from('conversations')
       .delete()
@@ -57,6 +47,3 @@ export async function DELETE(
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
-
-

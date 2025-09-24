@@ -2,22 +2,63 @@
 
 import { AppBar, Box, Button, Container, Stack, Toolbar, Typography } from "@mui/material";
 import AuthGate from "@/components/AuthGate";
+import UserMenu from "@/components/UserMenu";
+import LandingPage from "@/components/LandingPage";
+import UpgradeModal from "@/components/UpgradeModal";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const router = useRouter();
+  const [isSignedIn, setIsSignedIn] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const { getSupabaseBrowserClient } = await import("@/lib/supabaseClient");
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsSignedIn(!!session);
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+      setIsSignedIn(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   async function signOut() {
     const { getSupabaseBrowserClient } = await import("@/lib/supabaseClient");
     const supabase = getSupabaseBrowserClient();
     await supabase.auth.signOut();
-    window.location.href = "/login";
+    setIsSignedIn(false);
+    // No redirect needed - we'll show the landing page automatically
   }
 
   function handleStartCall() {
     router.push("/call");
   }
 
+  function handleViewHistory() {
+    router.push("/history");
+  }
+
+  // Show loading state
+  if (loading) {
+    return null;
+  }
+
+  // Show landing page for unauthenticated users
+  if (!isSignedIn) {
+    return <LandingPage />;
+  }
+
+  // Show authenticated dashboard
   return (
     <AuthGate>
       <Box className="gradient-bg" sx={{ minHeight: "100vh" }}>
@@ -30,7 +71,38 @@ export default function Home() {
             <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
               Jarvis AI
             </Typography>
-            <Stack direction="row" spacing={2}>
+                        <Stack direction="row" spacing={2}>
+              <Button 
+                onClick={() => router.push("/dashboard")} 
+                variant="outlined"
+                sx={{ 
+                  borderRadius: 3,
+                  textTransform: "none",
+                  borderColor: "rgba(144, 202, 249, 0.5)",
+                  "&:hover": {
+                    borderColor: "#90caf9",
+                    background: "rgba(144, 202, 249, 0.1)"
+                  }
+                }}
+              >
+                Dashboard
+              </Button>
+              <Button 
+                onClick={() => setShowUpgradeModal(true)} 
+                variant="outlined"
+                sx={{ 
+                  borderRadius: 3,
+                  textTransform: "none",
+                  borderColor: "rgba(76, 175, 80, 0.5)",
+                  color: "#4caf50",
+                  "&:hover": {
+                    borderColor: "#4caf50",
+                    background: "rgba(76, 175, 80, 0.1)"
+                  }
+                }}
+              >
+                Upgrade
+              </Button>
               <Button 
                 onClick={handleStartCall} 
                 variant="contained" 
@@ -46,8 +118,8 @@ export default function Home() {
                 Start Call
               </Button>
               <Button 
-                href="/history" 
-                variant="outlined" 
+                onClick={handleViewHistory} 
+                variant="outlined"
                 sx={{ 
                   borderRadius: 3,
                   textTransform: "none",
@@ -60,19 +132,7 @@ export default function Home() {
               >
                 History
               </Button>
-              <Button 
-                onClick={signOut}
-                sx={{ 
-                  borderRadius: 3,
-                  textTransform: "none",
-                  color: "rgba(255, 255, 255, 0.7)",
-                  "&:hover": {
-                    background: "rgba(255, 255, 255, 0.1)"
-                  }
-                }}
-              >
-                Sign out
-              </Button>
+              <UserMenu />
             </Stack>
           </Toolbar>
         </AppBar>
@@ -126,7 +186,7 @@ export default function Home() {
                   🎤 Start Conversation
                 </Button>
                 <Button 
-                  href="/history"
+                  onClick={handleViewHistory}
                   variant="outlined"
                   size="large"
                   sx={{ 
@@ -150,6 +210,13 @@ export default function Home() {
             </Box>
           </Box>
         </Container>
+
+        {/* Upgrade Modal */}
+        <UpgradeModal
+          open={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+          currentPlan="free" // TODO: Get actual user plan
+        />
       </Box>
     </AuthGate>
   );
