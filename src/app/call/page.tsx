@@ -1,14 +1,13 @@
 "use client";
 
 import AuthGate from "@/components/AuthGate";
-import DebugPanel from "@/components/DebugPanel";
-import UserMenu from "@/components/UserMenu";
 import UsageLimitModal from "@/components/UsageLimitModal";
-import { AppBar, Box, Button, Container, Stack, Toolbar, Typography } from "@mui/material";
-import { useConversation } from "@elevenlabs/react";
-import { useCallback, useRef, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import UserMenu from "@/components/UserMenu";
 import { useConversationTracking } from "@/hooks/useConversationTracking";
+import { useConversation } from "@elevenlabs/react";
+import { AppBar, Box, Button, Container, Stack, Toolbar, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function CallPage() {
   const router = useRouter();
@@ -29,14 +28,10 @@ export default function CallPage() {
 
   // Usage tracking
   const {
-    isDebugMode,
-    setIsDebugMode,
-    currentMetrics,
     startConversation: startTracking,
     endConversation: endTracking,
     handleMessage: trackMessage,
     updateRealTimeMetrics,
-    getEstimatedCost,
   } = useConversationTracking();
 
   const conversation = useConversation({
@@ -56,10 +51,10 @@ export default function CallPage() {
       console.log("StartTime at disconnect:", startTime);
       console.log("Messages ref at disconnect:", messagesRef.current);
       console.log("StartTime ref at disconnect:", startTimeRef.current);
-      
+
       // End usage tracking and get final metrics
       const finalMetrics = endTracking();
-      
+
       // Use ref-based save to avoid stale closure issues
       saveConversationFromRefs(finalMetrics);
     },
@@ -71,7 +66,7 @@ export default function CallPage() {
       type?: string;
     }) => {
       console.log("Message:", message);
-      
+
       // Handle the actual ElevenLabs message format
       if (message.source === 'user') {
         const content = message.message || message.content || message.text || '';
@@ -100,7 +95,7 @@ export default function CallPage() {
         trackMessage(message, false);
         console.log("Added AI message:", content);
       }
-      
+
       // Legacy format support (in case the format changes)
       else if (message.type === 'user_transcript') {
         const content = message.content || message.text || '';
@@ -157,7 +152,7 @@ export default function CallPage() {
       const { getSupabaseBrowserClient } = await import("@/lib/supabaseClient");
       const supabase = getSupabaseBrowserClient();
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) return false;
 
       const response = await fetch('/api/usage/check-limit', {
@@ -169,22 +164,22 @@ export default function CallPage() {
       if (response.ok) {
         const data = await response.json();
         setUsageInfo(data);
-        
+
         if (!data.canStartConversation) {
           setShowUsageModal(true);
           return false;
         }
-        
+
         // Show warning if close to limit (80%+)
         const usagePercentage = (data.conversationsUsed / data.conversationsLimit) * 100;
         if (usagePercentage >= 80) {
           setShowUsageModal(true);
           return true; // Allow conversation but show warning
         }
-        
+
         return true;
       }
-      
+
       return false;
     } catch (error) {
       console.error('Error checking usage limits:', error);
@@ -215,7 +210,7 @@ export default function CallPage() {
       const { getSupabaseBrowserClient } = await import("@/lib/supabaseClient");
       const supabase = getSupabaseBrowserClient();
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         console.log('No user found, skipping save');
         return;
@@ -223,9 +218,9 @@ export default function CallPage() {
 
       const title = conversationTitleRef.current || `Conversation on ${new Date().toLocaleDateString()}`;
       const transcript = messagesRef.current.map(m => `${m.role}: ${m.content}`).join('\n');
-      
-      // Calculate estimated cost
-      const estimatedCostPounds = metrics ? getEstimatedCost(metrics) : 0;
+
+        // Calculate estimated cost (simplified without debug functionality)
+        const estimatedCostPounds = 0;
       const costCents = Math.round(estimatedCostPounds * 100); // Convert to pence
 
       console.log('Saving conversation from refs:', { title, transcript, user_id: user.id, metrics });
@@ -253,7 +248,7 @@ export default function CallPage() {
       });
 
       const result = await response.json();
-      
+
       if (response.ok) {
         console.log('Conversation saved successfully:', result);
       } else {
@@ -262,7 +257,7 @@ export default function CallPage() {
     } catch (error) {
       console.error('Failed to save conversation:', error);
     }
-  }, [getEstimatedCost]);
+  }, []);
 
   // Keep the original save function for manual saves (uses current state)
   const saveConversation = useCallback(async () => {
@@ -279,7 +274,7 @@ export default function CallPage() {
       const { getSupabaseBrowserClient } = await import("@/lib/supabaseClient");
       const supabase = getSupabaseBrowserClient();
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         console.log('No user found, skipping save');
         return;
@@ -302,7 +297,7 @@ export default function CallPage() {
       });
 
       const result = await response.json();
-      
+
       if (response.ok) {
         console.log('Conversation saved successfully:', result);
       } else {
@@ -331,7 +326,7 @@ export default function CallPage() {
       });
     } catch (error) {
       console.error("Failed to start conversation:", error);
-      
+
       // More specific error handling
       if (error instanceof Error) {
         if (error.name === 'NotAllowedError') {
@@ -363,35 +358,35 @@ export default function CallPage() {
   const CircularAudioVisualizer = ({ isActive, isSpeaking }: { isActive: boolean; isSpeaking: boolean }) => (
     <Box className="circular-audio-visualizer">
       {/* Wave rings */}
-      <Box 
-        className="wave-ring wave-ring-1" 
-        sx={{ 
+      <Box
+        className="wave-ring wave-ring-1"
+        sx={{
           animationPlayState: isActive ? "running" : "paused",
           opacity: isActive ? 1 : 0.3
-        }} 
+        }}
       />
-      <Box 
-        className="wave-ring wave-ring-2" 
-        sx={{ 
+      <Box
+        className="wave-ring wave-ring-2"
+        sx={{
           animationPlayState: isActive ? "running" : "paused",
           opacity: isActive ? 1 : 0.3
-        }} 
+        }}
       />
-      <Box 
-        className="wave-ring wave-ring-3" 
-        sx={{ 
+      <Box
+        className="wave-ring wave-ring-3"
+        sx={{
           animationPlayState: isActive ? "running" : "paused",
           opacity: isActive ? 1 : 0.3
-        }} 
+        }}
       />
-      <Box 
-        className="wave-ring wave-ring-4" 
-        sx={{ 
+      <Box
+        className="wave-ring wave-ring-4"
+        sx={{
           animationPlayState: isActive ? "running" : "paused",
           opacity: isActive ? 1 : 0.3
-        }} 
+        }}
       />
-      
+
       {/* Floating particles */}
       {[...Array(6)].map((_, i) => (
         <Box
@@ -403,15 +398,15 @@ export default function CallPage() {
           }}
         />
       ))}
-      
+
       {/* Center circle */}
-      <Box 
+      <Box
         className="circular-center"
         sx={{
           transform: isSpeaking ? "scale(1.1)" : "scale(1)",
           transition: "transform 0.3s ease",
-          boxShadow: isSpeaking 
-            ? "0 0 40px rgba(144, 202, 249, 0.8), 0 0 60px rgba(100, 181, 246, 0.6)" 
+          boxShadow: isSpeaking
+            ? "0 0 40px rgba(144, 202, 249, 0.8), 0 0 60px rgba(100, 181, 246, 0.6)"
             : "0 0 30px rgba(144, 202, 249, 0.6)",
         }}
       >
@@ -437,16 +432,8 @@ export default function CallPage() {
   return (
     <AuthGate>
       <Box className="gradient-bg" sx={{ minHeight: "100vh" }}>
-        {/* Debug Panel */}
-        <DebugPanel
-          isDebugMode={isDebugMode}
-          onDebugModeChange={setIsDebugMode}
-          metrics={currentMetrics}
-          estimatedCost={getEstimatedCost(currentMetrics)}
-          isConversationActive={conversation.status === "connected"}
-        />
 
-        <AppBar position="static" color="transparent" elevation={0} sx={{ 
+        <AppBar position="static" color="transparent" elevation={0} sx={{
           background: "rgba(16, 21, 28, 0.8)",
           backdropFilter: "blur(20px)",
           borderBottom: "1px solid rgba(144, 202, 249, 0.2)"
@@ -456,10 +443,10 @@ export default function CallPage() {
               Jarvis AI
             </Typography>
             <Stack direction="row" spacing={2}>
-              <Button 
+              <Button
                 onClick={() => router.push("/")}
                 variant="outlined"
-                sx={{ 
+                sx={{
                   borderRadius: 3,
                   textTransform: "none",
                   borderColor: "rgba(144, 202, 249, 0.5)",
@@ -471,10 +458,10 @@ export default function CallPage() {
               >
                 Home
               </Button>
-              <Button 
+              <Button
                 onClick={() => router.push("/history")}
                 variant="outlined"
-                sx={{ 
+                sx={{
                   borderRadius: 3,
                   textTransform: "none",
                   borderColor: "rgba(144, 202, 249, 0.5)",
@@ -501,16 +488,16 @@ export default function CallPage() {
             }}>
               Talk to Jarvis
             </Typography>
-            
-            <Box 
+
+            <Box
               className={`glass-card-dark ${conversation.isSpeaking ? 'speaking-pulse' : ''}`}
-              sx={{ 
-                width: "100%", 
-                minHeight: 320, 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "center", 
-                flexDirection: "column", 
+              sx={{
+                width: "100%",
+                minHeight: 320,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
                 gap: 3,
                 p: 4,
                 position: "relative",
@@ -533,8 +520,8 @@ export default function CallPage() {
                     width: 12,
                     height: 12,
                     borderRadius: "50%",
-                    backgroundColor: conversation.status === "connected" ? "#4caf50" : 
-                                   conversation.status === "connecting" ? "#ff9800" : "#757575",
+                    backgroundColor: conversation.status === "connected" ? "#4caf50" :
+                      conversation.status === "connecting" ? "#ff9800" : "#757575",
                     animation: conversation.status === "connecting" ? "pulse 1s infinite" : "none"
                   }}
                 />
@@ -546,15 +533,15 @@ export default function CallPage() {
               {/* Main content area */}
               <Box textAlign="center" sx={{ mb: 2 }}>
                 <Typography variant="h6" gutterBottom>
-                  {conversation.status === "connected" 
-                    ? conversation.isSpeaking 
-                      ? "Jarvis is speaking..." 
+                  {conversation.status === "connected"
+                    ? conversation.isSpeaking
+                      ? "Jarvis is speaking..."
                       : "Listening... speak now"
                     : "Ready to connect"
                   }
                 </Typography>
                 <Typography color="text.secondary" variant="body2">
-                  {conversation.status === "connected" 
+                  {conversation.status === "connected"
                     ? "Having a conversation with Jarvis AI"
                     : "Click the button below to start your conversation"
                   }
@@ -564,9 +551,9 @@ export default function CallPage() {
               {/* Circular Audio visualizer */}
               {conversation.status === "connected" && (
                 <Box sx={{ my: 3 }}>
-                  <CircularAudioVisualizer 
-                    isActive={conversation.status === "connected"} 
-                    isSpeaking={conversation.isSpeaking} 
+                  <CircularAudioVisualizer
+                    isActive={conversation.status === "connected"}
+                    isSpeaking={conversation.isSpeaking}
                   />
                 </Box>
               )}
@@ -574,12 +561,12 @@ export default function CallPage() {
               {/* Connection button */}
               <Box sx={{ mt: "auto" }}>
                 {conversation.status !== "connected" ? (
-                  <Button 
-                    onClick={startConversation} 
-                    disabled={conversation.status === "connecting"} 
-                    variant="contained" 
+                  <Button
+                    onClick={startConversation}
+                    disabled={conversation.status === "connecting"}
+                    variant="contained"
                     size="large"
-                    sx={{ 
+                    sx={{
                       borderRadius: 4,
                       px: 6,
                       py: 2,
@@ -603,12 +590,12 @@ export default function CallPage() {
                   </Button>
                 ) : (
                   <Stack direction="row" spacing={2}>
-                    <Button 
-                      color="error" 
-                      onClick={stopConversation} 
-                      variant="contained" 
+                    <Button
+                      color="error"
+                      onClick={stopConversation}
+                      variant="contained"
                       size="large"
-                      sx={{ 
+                      sx={{
                         borderRadius: 4,
                         px: 6,
                         py: 2,
@@ -625,11 +612,11 @@ export default function CallPage() {
                     >
                       End Conversation
                     </Button>
-                    <Button 
+                    <Button
                       onClick={saveConversation}
                       variant="outlined"
                       size="large"
-                      sx={{ 
+                      sx={{
                         borderRadius: 4,
                         px: 4,
                         py: 2,
@@ -653,11 +640,11 @@ export default function CallPage() {
 
             {/* Conversation messages preview */}
             {messages.length > 0 && (
-              <Box 
+              <Box
                 className="glass-card-dark"
-                sx={{ 
-                  width: "100%", 
-                  maxHeight: 200, 
+                sx={{
+                  width: "100%",
+                  maxHeight: 200,
                   overflow: "auto",
                   p: 3
                 }}
@@ -667,12 +654,12 @@ export default function CallPage() {
                 </Typography>
                 <Stack spacing={1}>
                   {messages.slice(-3).map((message, index) => (
-                    <Box key={index} sx={{ 
-                      p: 1, 
-                      borderRadius: 2, 
-                      background: message.role === 'user' 
-                        ? "rgba(144, 202, 249, 0.1)" 
-                        : "rgba(255, 255, 255, 0.05)" 
+                    <Box key={index} sx={{
+                      p: 1,
+                      borderRadius: 2,
+                      background: message.role === 'user'
+                        ? "rgba(144, 202, 249, 0.1)"
+                        : "rgba(255, 255, 255, 0.05)"
                     }}>
                       <Typography variant="caption" color="text.secondary">
                         {message.role === 'user' ? 'You' : 'Jarvis'}:
