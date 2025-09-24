@@ -32,13 +32,6 @@ export default function Home() {
     }
   };
 
-  async function signOut() {
-    const { getSupabaseBrowserClient } = await import("@/lib/supabaseClient");
-    const supabase = getSupabaseBrowserClient();
-    await supabase.auth.signOut();
-    setIsSignedIn(false);
-    // No redirect needed - we'll show the landing page automatically
-  }
 
   function handleStartCall() {
     router.push("/call");

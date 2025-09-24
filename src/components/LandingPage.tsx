@@ -24,8 +24,6 @@ import {
   Psychology as PsychologyIcon,
   Speed as SpeedIcon,
   Security as SecurityIcon,
-  TrendingUp as TrendingUpIcon,
-  Person as PersonIcon,
   ExpandMore as ExpandMoreIcon,
   PlayArrow as PlayIcon,
   Check as CheckIcon
@@ -360,7 +358,7 @@ export default function LandingPage() {
                   </Box>
                   <Rating value={testimonial.rating} readOnly sx={{ mb: 2 }} />
                   <Typography variant="body2" color="text.secondary">
-                    "{testimonial.comment}"
+                    &quot;{testimonial.comment}&quot;
                   </Typography>
                 </Paper>
               </Grid>

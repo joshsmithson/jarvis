@@ -13,8 +13,6 @@ import {
   Toolbar, 
   Typography,
   Grid,
-  Card,
-  CardContent,
   Switch,
   FormControlLabel,
   Divider,
@@ -27,7 +25,6 @@ import { useEffect, useState, useCallback } from "react";
 import { 
   Settings as SettingsIcon,
   CreditCard as CreditCardIcon,
-  Notifications as NotificationsIcon,
   Security as SecurityIcon,
   AccountCircle as AccountIcon,
   Upgrade as UpgradeIcon
@@ -71,7 +68,7 @@ export default function SettingsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [router]);
 
   const loadLocalSettings = () => {
     const savedDebugMode = localStorage.getItem('jarvis_debug_mode') === 'true';

@@ -24,7 +24,7 @@ import {
   TableRow
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { 
   TrendingUp as TrendingUpIcon,
   AttachMoney as MoneyIcon,
@@ -56,11 +56,7 @@ export default function UserDashboard() {
   const [usage, setUsage] = useState<UserUsage | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadUserUsage();
-  }, []);
-
-  const loadUserUsage = async () => {
+  const loadUserUsage = useCallback(async () => {
     try {
       const { getSupabaseBrowserClient } = await import("@/lib/supabaseClient");
       const supabase = getSupabaseBrowserClient();
@@ -83,7 +79,11 @@ export default function UserDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    loadUserUsage();
+  }, [loadUserUsage]);
 
   const formatDuration = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -311,7 +311,7 @@ export default function UserDashboard() {
                       ⚠️ Usage Limit Warning
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      You're almost at your monthly limit. Consider upgrading to continue using Jarvis.
+                      You&apos;re almost at your monthly limit. Consider upgrading to continue using Jarvis.
                     </Typography>
                   </Box>
                 )}

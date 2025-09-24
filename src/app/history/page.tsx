@@ -2,8 +2,7 @@
 
 import AuthGate from "@/components/AuthGate";
 import UserMenu from "@/components/UserMenu";
-import Link from "next/link";
-import { AppBar, Box, Container, List, ListItem, ListItemButton, ListItemText, Stack, Toolbar, Typography, Button, CircularProgress } from "@mui/material";
+import { AppBar, Box, Container, Stack, Toolbar, Typography, Button, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 

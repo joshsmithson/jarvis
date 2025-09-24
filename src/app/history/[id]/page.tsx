@@ -2,7 +2,7 @@
 
 import AuthGate from "@/components/AuthGate";
 import UserMenu from "@/components/UserMenu";
-import { AppBar, Box, Button, Container, IconButton, Paper, Stack, Toolbar, Typography, CircularProgress } from "@mui/material";
+import { AppBar, Box, Button, Container, IconButton, Stack, Toolbar, Typography, CircularProgress } from "@mui/material";
 import { ArrowBack, Delete } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -227,7 +227,7 @@ export default function ConversationDetailPage() {
                         No transcript available
                       </Typography>
                       <Typography color="text.secondary" textAlign="center">
-                        This conversation doesn't have a saved transcript.
+                        This conversation doesn&apos;t have a saved transcript.
                       </Typography>
                     </Stack>
                   )}
@@ -239,7 +239,7 @@ export default function ConversationDetailPage() {
                   Conversation not found
                 </Typography>
                 <Typography color="text.secondary" sx={{ mb: 3 }}>
-                  The conversation you're looking for doesn't exist or has been deleted.
+                  The conversation you&apos;re looking for doesn&apos;t exist or has been deleted.
                 </Typography>
                 <Button 
                   onClick={() => router.push('/history')}

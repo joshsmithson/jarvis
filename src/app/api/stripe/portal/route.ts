@@ -35,8 +35,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ 
         url: session.url 
       });
-    } catch (portalError: any) {
-      if (portalError.code === 'billing_portal_configuration_missing') {
+    } catch (portalError: unknown) {
+      if (portalError && typeof portalError === 'object' && 'code' in portalError && portalError.code === 'billing_portal_configuration_missing') {
         return NextResponse.json({ 
           error: 'Customer portal not configured. Please set up your portal at https://dashboard.stripe.com/test/settings/billing/portal',
           needsSetup: true

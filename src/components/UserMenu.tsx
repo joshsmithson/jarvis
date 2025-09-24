@@ -14,7 +14,6 @@ import {
 import { 
   Dashboard as DashboardIcon, 
   Logout as LogoutIcon,
-  Person as PersonIcon,
   Settings as SettingsIcon
 } from "@mui/icons-material";
 import { useState, useEffect } from "react";

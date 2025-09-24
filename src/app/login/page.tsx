@@ -178,7 +178,7 @@ export default function LoginPage() {
           {/* Features */}
           <Box sx={{ width: '100%', maxWidth: 600 }}>
             <Typography variant="h6" textAlign="center" sx={{ mb: 3, fontWeight: 600 }}>
-              What you'll get:
+              What you&apos;ll get:
             </Typography>
             <Stack spacing={2}>
               {features.map((feature, index) => (

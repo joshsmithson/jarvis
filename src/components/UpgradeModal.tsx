@@ -27,17 +27,17 @@ interface UpgradeModalProps {
   currentPlan?: string;
 }
 
-interface PricingPlan {
-  name: string;
-  price: string;
-  period: string;
-  conversations: number;
-  maxDuration: string;
-  features: string[];
-  current: boolean;
-  popular: boolean;
-  color: string;
-}
+// interface PricingPlan {
+//   name: string;
+//   price: string;
+//   period: string;
+//   conversations: number;
+//   maxDuration: string;
+//   features: string[];
+//   current: boolean;
+//   popular: boolean;
+//   color: string;
+// }
 
 const UpgradeModal: React.FC<UpgradeModalProps> = ({ open, onClose, currentPlan = 'free' }) => {
   const plans = [

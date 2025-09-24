@@ -35,7 +35,7 @@ const plans = [
 ];
 
 export default function StripeTestPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{id: string; email?: string} | null>(null);
   const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -346,7 +346,7 @@ export default function StripeTestPage() {
               <ol>
                 <li><strong>Test Initial Subscription:</strong> Click any plan button above to create your first subscription</li>
                 <li><strong>Test Plan Changes:</strong> Use different plan buttons to test upgrades/downgrades</li>
-                <li><strong>Test Cancellation:</strong> Use "Open Customer Portal" → Cancel subscription</li>
+                <li><strong>Test Cancellation:</strong> Use &quot;Open Customer Portal&quot; → Cancel subscription</li>
                 <li><strong>Test Payment Methods:</strong> Use Customer Portal to update payment methods</li>
                 <li><strong>Test Failed Payments:</strong> Use test card <code>4000000000000341</code> (requires authentication, decline)</li>
                 <li><strong>Monitor Webhooks:</strong> Watch your terminal running <code>stripe listen</code> for real-time events</li>

@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
 
 const supabase = getSupabaseServerClient();
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Basic security: check if user is authenticated
     // In a real app, you'd want proper admin role checking
-    const authHeader = request.headers.get('authorization');
+    // const authHeader = request.headers.get('authorization');
     
     // Get all conversations with usage data
     const { data: conversations, error: conversationsError } = await supabase

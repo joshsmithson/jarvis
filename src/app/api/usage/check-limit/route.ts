@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     // If no plan exists, create a free plan
     if (!userPlan) {
-      const { data: newPlan, error: createError } = await supabase
+      const { error: createError } = await supabase
         .from('user_plans')
         .insert([{
           user_id,

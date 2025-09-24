@@ -15,7 +15,11 @@ interface ConversationMetrics {
 interface UsageEvent {
   type: 'user_speech_start' | 'user_speech_end' | 'ai_speech_start' | 'ai_speech_end' | 'message_received';
   timestamp: number;
-  data?: any;
+  data?: {
+    duration_ms?: number;
+    content?: string;
+    tokens?: number;
+  };
 }
 
 export function useConversationTracking() {
@@ -57,12 +61,12 @@ export function useConversationTracking() {
     return Math.ceil(text.length / 4);
   }, []);
 
-  const estimateTokensFromDuration = useCallback((durationMs: number): number => {
-    // Rough estimate: ~2-3 tokens per second of speech
-    // This will need calibration with real data
-    const seconds = durationMs / 1000;
-    return Math.ceil(seconds * 2.5);
-  }, []);
+  // const estimateTokensFromDuration = useCallback((durationMs: number): number => {
+  //   // Rough estimate: ~2-3 tokens per second of speech
+  //   // This will need calibration with real data
+  //   const seconds = durationMs / 1000;
+  //   return Math.ceil(seconds * 2.5);
+  // }, []);
 
   const startConversation = useCallback(() => {
     const now = Date.now();
@@ -118,7 +122,11 @@ export function useConversationTracking() {
     });
   }, [logEvent]);
 
-  const handleMessage = useCallback((message: any, isUser: boolean) => {
+  const handleMessage = useCallback((message: {
+    message?: string;
+    content?: string;
+    text?: string;
+  }, isUser: boolean) => {
     const content = message.message || message.content || message.text || '';
     const tokenEstimate = estimateTokensFromText(content);
     

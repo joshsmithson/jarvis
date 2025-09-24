@@ -11,7 +11,7 @@ import {
   Stack, 
   Toolbar, 
   Typography,
-  Grid,
+  Grid2 as Grid,
   Card,
   CardContent,
   Table,
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
 
           {/* Overview Stats */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid xs={12} sm={6} md={4}>
               <StatCard
                 title="Total Conversations"
                 value={stats.totalConversations.toLocaleString()}
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                 color="#90caf9"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid xs={12} sm={6} md={4}>
               <StatCard
                 title="Total Users"
                 value={stats.totalUsers.toLocaleString()}
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
                 color="#4caf50"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid xs={12} sm={6} md={4}>
               <StatCard
                 title="Total Usage Time"
                 value={formatDuration(stats.totalDuration)}
@@ -236,7 +236,7 @@ export default function AdminDashboard() {
                 color="#ff9800"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid xs={12} sm={6} md={4}>
               <StatCard
                 title="Total Tokens"
                 value={stats.totalTokens.toLocaleString()}
@@ -245,7 +245,7 @@ export default function AdminDashboard() {
                 color="#9c27b0"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid xs={12} sm={6} md={4}>
               <StatCard
                 title="Total Cost"
                 value={formatCost(stats.totalCost)}
@@ -254,7 +254,7 @@ export default function AdminDashboard() {
                 color="#f44336"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
+            <Grid xs={12} sm={6} md={4}>
               <StatCard
                 title="Avg Conversation"
                 value={formatDuration(stats.averageConversationLength)}
